@@ -1,175 +1,225 @@
-<p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
-</p>
+# 🏠 FamilyHub — AI 家庭日程管理中心
 
-# Hermes Agent ☤
+> 两个入口，一个日历，搞定全家时间管理。
 
-<p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
-</p>
+## 这是什么
 
-**The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+FamilyHub 是一个基于 AI Agent 的家庭日程管理中枢。作为家庭主理人，你需要同时追踪：
 
-Use any model you want — [Nous Portal](https://portal.nousresearch.com), [OpenRouter](https://openrouter.ai) (200+ models), [z.ai/GLM](https://z.ai), [Kimi/Moonshot](https://platform.moonshot.ai), [MiniMax](https://www.minimax.io), OpenAI, or your own endpoint. Switch with `hermes model` — no code changes, no lock-in.
+- 📚 **孩子的学业** — 考试、家长会、学校活动、补习班
+- 🏃 **课外活动** — 兴趣班、比赛、训练、夏令营
+- 👨‍👩‍👧‍👦 **家庭活动** — 聚餐、旅行、节日、亲友聚会
+- 💼 **个人事务** — 工作会议、出差、缴费、维修、体检
+- 🤝 **另一半的日程** — 与家庭相关的配偶行程和安排
 
-<table>
-<tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
-<tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
-<tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
-<tr><td><b>Scheduled automations</b></td><td>Built-in cron scheduler with delivery to any platform. Daily reports, nightly backups, weekly audits — all in natural language, running unattended.</td></tr>
-<tr><td><b>Delegates and parallelizes</b></td><td>Spawn isolated subagents for parallel workstreams. Write Python scripts that call tools via RPC, collapsing multi-step pipelines into zero-context-cost turns.</td></tr>
-<tr><td><b>Runs anywhere, not just your laptop</b></td><td>Six terminal backends — local, Docker, SSH, Daytona, Singularity, and Modal. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
-<tr><td><b>Research-ready</b></td><td>Batch trajectory generation, Atropos RL environments, trajectory compression for training the next generation of tool-calling models.</td></tr>
-</table>
+FamilyHub 通过 **2 个入口** 自动聚合所有日程信息，统一导入一个 Calendar 管理。
 
 ---
 
-## Quick Install
+## 两个入口
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
+```
+┌─────────────────────┐     ┌─────────────────────┐
+│  📱 即时通讯 (IM)    │     │  📧 邮件 (Email)     │
+│                     │     │                     │
+│  聊天/截图/转发      │     │  转发到 agentmail.to │
+│        ↓            │     │        ↓            │
+│  AI 提取日程信息     │     │  AI 提取日程信息     │
+└────────┬────────────┘     └────────┬────────────┘
+         │                           │
+         └───────────┬───────────────┘
+                     ↓
+            ┌────────────────┐
+            │  JSON 文档化    │
+            │  结构化存储     │
+            └───────┬────────┘
+                    ↓
+            ┌────────────────┐
+            │  📅 Calendar   │
+            │  统一日程视图   │
+            └────────────────┘
 ```
 
-Works on Linux, macOS, and WSL2. The installer handles everything — Python, Node.js, dependencies, and the `hermes` command. No prerequisites except git.
+### 入口 1：即时通讯
 
-> **Windows:** Native Windows is not supported. Please install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and run the command above.
+支持平台（可随时切换）：
 
-After installation:
+| 平台 | 状态 |
+|------|------|
+| Telegram | ✅ 默认 |
+| 微信 / 企业微信 | 🔄 适配中 |
+| 飞书 | 🔄 适配中 |
+| 钉钉 | 🔄 适配中 |
+| WhatsApp | 📋 计划中 |
+| iMessage | 📋 计划中 |
+| Slack | 📋 计划中 |
+
+**使用方式：**
+
+- **直接对话**：「下周三下午3点虎子数学考试」「周五晚上6点全家海底捞」
+- **发送截图**：转发学校通知、课外班课表、行程确认单的截图，AI 自动 OCR 识别
+- **转发消息**：把其他群里的重要日程消息转发过来
+
+AI Agent 自动提取 4 个核心要素：**时间、地点、参与人、事件**，结构化为 JSON 后导入 Calendar。
+
+### 入口 2：邮箱
+
+通过 [AgentMail](https://agentmail.to) 建立专属 AI 邮箱，自动处理日程相关邮件。
+
+**使用方式：**
+
+- **直接转发**：把学校邮件、培训班通知、机票酒店确认函转发到 `familyhub@agentmail.to`
+- **自动转发规则**：在邮箱中设置过滤规则，符合条件的邮件自动转发到 AI 邮箱
+- **订阅通知**：各类平台的通知邮件直接发送到 AI 邮箱
+
+AI 解析邮件内容，提取日程信息，格式化后自动导入 Calendar。
+
+---
+
+## 核心能力
+
+### 智能日程提取
+
+```
+输入（任意形式）→ AI 理解 → 结构化 JSON → Calendar 事件
+
+示例：
+  输入：「明天上午虎子钢琴课 10点 文化宫」
+  输出：
+  {
+    "title": "虎子 - 钢琴课",
+    "date": "2026-04-09",
+    "time": "10:00",
+    "location": "文化宫",
+    "participants": ["虎子"],
+    "category": "课外活动"
+  }
+```
+
+### 家庭成员管理
+
+| 成员 | 角色 | 日程重点 |
+|------|------|----------|
+| 🐯 虎子 | 儿子（16岁） | 学业、课外活动、社交 |
+| 🐯 小虎女 | 女儿（13岁） | 学业、课外活动、社交 |
+| 👨 虎爸 | 家庭主理人 | 全部家庭日程 + 个人事务 |
+| 👩 虎妈 | 配偶 | 家庭相关日程 |
+
+每位家庭成员对应 Calendar 中独立的分类视图，既统一又清晰。
+
+### 智能推理
+
+- **日期推断**：「下周三」→ 自动计算具体日期
+- **时间推断**：酒店预订 → 默认入住 15:00，退房 11:00；航班 → 自动计算到达时间
+- **人员推断**：截图中出现的名字 → 自动匹配家庭成员
+- **时区处理**：国内默认 Asia/Shanghai，日本行程自动使用 Asia/Tokyo
+
+---
+
+## 技术架构
+
+```
+┌─────────────────────────────────────────────────┐
+│                   FamilyHub                      │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+│  │ Telegram │  │  Email   │  │  其他 IM  │      │
+│  │  Bot     │  │  Worker  │  │  Adapter │      │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘      │
+│       │              │              │            │
+│       └──────────────┼──────────────┘            │
+│                      ↓                           │
+│              ┌───────────────┐                   │
+│              │  AI Pipeline  │                   │
+│              │  意图识别      │                   │
+│              │  信息提取      │                   │
+│              │  OCR 识别     │                   │
+│              │  结构化输出    │                   │
+│              └───────┬───────┘                   │
+│                      ↓                           │
+│              ┌───────────────┐                   │
+│              │  JSON Store   │                   │
+│              │  结构化日程    │                   │
+│              └───────┬───────┘                   │
+│                      ↓                           │
+│              ┌───────────────┐                   │
+│              │  Google       │                   │
+│              │  Calendar API │                   │
+│              └───────────────┘                   │
+│                                                  │
+└─────────────────────────────────────────────────┘
+```
+
+### 四类意图
+
+| 意图 | 触发方式 | 行为 |
+|------|----------|------|
+| **查询** | 「这周有什么安排？」「虎子下周有课吗？」 | 查询 Calendar 并回复 |
+| **新增** | 发送日程文本或截图 | 提取信息 → JSON → 导入 Calendar |
+| **修改** | 「把周三的钢琴课改到周四」 | 定位事件 → 更新 Calendar |
+| **对话** | 一般聊天 | 正常回复 |
+
+---
+
+## 快速开始
+
+### 环境要求
+
+- Python 3.10+
+- Google Calendar API 凭证
+- LLM API Key（OpenRouter / NVIDIA / 其他）
+- Telegram Bot Token（或替换为其他 IM 平台）
+
+### 安装
 
 ```bash
-source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-hermes              # start chatting!
+git clone https://github.com/aiist007/familyhub.git
+cd familyhub
+pip install -r requirements.txt
+cp .env.example .env
+# 编辑 .env 填入你的 API Keys
+```
+
+### 配置
+
+```bash
+# 1. 配置家庭成员
+# 首次运行会引导设置
+
+# 2. 配置 Telegram Bot
+# 填入 Bot Token 到 .env
+
+# 3. 配置 AgentMail
+# 注册 agentmail.to 并获取凭证
+
+# 4. 配置 Google Calendar
+# 放置 OAuth 凭证文件
+```
+
+### 运行
+
+```bash
+# 启动 Telegram Agent
+python scripts/telegram_calendar_agent.py
+
+# 启动邮件 Worker
+python scripts/agentmail_calendar_worker.py
 ```
 
 ---
 
-## Getting Started
+## 设计理念
 
-```bash
-hermes              # Interactive CLI — start a conversation
-hermes model        # Choose your LLM provider and model
-hermes tools        # Configure which tools are enabled
-hermes config set   # Set individual config values
-hermes gateway      # Start the messaging gateway (Telegram, Discord, etc.)
-hermes setup        # Run the full setup wizard (configures everything at once)
-hermes claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
-hermes update       # Update to the latest version
-hermes doctor       # Diagnose any issues
-```
+> **家庭主理人不需要另一个复杂的 App，需要的是一个「说到即做到」的助手。**
 
-📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
-
-## CLI vs Messaging Quick Reference
-
-Hermes has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
-
-| Action | CLI | Messaging platforms |
-|---------|-----|---------------------|
-| Start chatting | `hermes` | Run `hermes gateway setup` + `hermes gateway start`, then send the bot a message |
-| Start fresh conversation | `/new` or `/reset` | `/new` or `/reset` |
-| Change model | `/model [provider:model]` | `/model [provider:model]` |
-| Set a personality | `/personality [name]` | `/personality [name]` |
-| Retry or undo the last turn | `/retry`, `/undo` | `/retry`, `/undo` |
-| Compress context / check usage | `/compress`, `/usage`, `/insights [--days N]` | `/compress`, `/usage`, `/insights [days]` |
-| Browse skills | `/skills` or `/<skill-name>` | `/skills` or `/<skill-name>` |
-| Interrupt current work | `Ctrl+C` or send a new message | `/stop` or send a new message |
-| Platform-specific status | `/platforms` | `/status`, `/sethome` |
-
-For the full command lists, see the [CLI guide](https://hermes-agent.nousresearch.com/docs/user-guide/cli) and the [Messaging Gateway guide](https://hermes-agent.nousresearch.com/docs/user-guide/messaging).
-
----
-
-## Documentation
-
-All documentation lives at **[hermes-agent.nousresearch.com/docs](https://hermes-agent.nousresearch.com/docs/)**:
-
-| Section | What's Covered |
-|---------|---------------|
-| [Quickstart](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart) | Install → setup → first conversation in 2 minutes |
-| [CLI Usage](https://hermes-agent.nousresearch.com/docs/user-guide/cli) | Commands, keybindings, personalities, sessions |
-| [Configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration) | Config file, providers, models, all options |
-| [Messaging Gateway](https://hermes-agent.nousresearch.com/docs/user-guide/messaging) | Telegram, Discord, Slack, WhatsApp, Signal, Home Assistant |
-| [Security](https://hermes-agent.nousresearch.com/docs/user-guide/security) | Command approval, DM pairing, container isolation |
-| [Tools & Toolsets](https://hermes-agent.nousresearch.com/docs/user-guide/features/tools) | 40+ tools, toolset system, terminal backends |
-| [Skills System](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) | Procedural memory, Skills Hub, creating skills |
-| [Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) | Persistent memory, user profiles, best practices |
-| [MCP Integration](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) | Connect any MCP server for extended capabilities |
-| [Cron Scheduling](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) | Scheduled tasks with platform delivery |
-| [Context Files](https://hermes-agent.nousresearch.com/docs/user-guide/features/context-files) | Project context that shapes every conversation |
-| [Architecture](https://hermes-agent.nousresearch.com/docs/developer-guide/architecture) | Project structure, agent loop, key classes |
-| [Contributing](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) | Development setup, PR process, code style |
-| [CLI Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) | All commands and flags |
-| [Environment Variables](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) | Complete env var reference |
-
----
-
-## Migrating from OpenClaw
-
-If you're coming from OpenClaw, Hermes can automatically import your settings, memories, skills, and API keys.
-
-**During first-time setup:** The setup wizard (`hermes setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
-
-**Anytime after install:**
-
-```bash
-hermes claw migrate              # Interactive migration (full preset)
-hermes claw migrate --dry-run    # Preview what would be migrated
-hermes claw migrate --preset user-data   # Migrate without secrets
-hermes claw migrate --overwrite  # Overwrite existing conflicts
-```
-
-What gets imported:
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.hermes/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
-
-See `hermes claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
-
----
-
-## Contributing
-
-We welcome contributions! See the [Contributing Guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
-
-Quick start for contributors:
-
-```bash
-git clone https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv venv --python 3.11
-source venv/bin/activate
-uv pip install -e ".[all,dev]"
-python -m pytest tests/ -q
-```
-
-> **RL Training (optional):** To work on the RL/Tinker-Atropos integration:
-> ```bash
-> git submodule update --init tinker-atropos
-> uv pip install -e "./tinker-atropos"
-> ```
-
----
-
-## Community
-
-- 💬 [Discord](https://discord.gg/NousResearch)
-- 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
-- 💡 [Discussions](https://github.com/NousResearch/hermes-agent/discussions)
+- **零学习成本**：会发消息就会用
+- **双通道覆盖**：IM 覆盖即时场景，邮件覆盖异步场景
+- **AI 做重活**：OCR、推理、格式化全交给 AI，人只管说和发
+- **一个日历看全局**：所有家庭成员的安排汇聚一处，一目了然
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
-
-Built by [Nous Research](https://nousresearch.com).
+MIT
