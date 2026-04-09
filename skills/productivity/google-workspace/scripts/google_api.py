@@ -272,17 +272,30 @@ def calendar_list(args):
 
 def calendar_create(args):
     service = build_service("calendar", "v3")
-    event = {
-        "summary": args.summary,
-        "start": {"dateTime": args.start},
-        "end": {"dateTime": args.end},
-    }
-    if args.location:
-        event["location"] = args.location
-    if args.description:
-        event["description"] = args.description
-    if args.attendees:
-        event["attendees"] = [{"email": e.strip()} for e in args.attendees.split(",")]
+
+    # If --json provided, use it directly (Google Calendar native format)
+    if args.json:
+        try:
+            event = json.loads(args.json)
+        except json.JSONDecodeError:
+            print("Error: --json is not valid JSON", file=sys.stderr)
+            sys.exit(1)
+    else:
+        # Legacy mode: compose from individual args
+        if not args.summary or not args.start or not args.end:
+            print("Error: --summary, --start, --end required (or use --json)", file=sys.stderr)
+            sys.exit(1)
+        event = {
+            "summary": args.summary,
+            "start": {"dateTime": args.start},
+            "end": {"dateTime": args.end},
+        }
+        if args.location:
+            event["location"] = args.location
+        if args.description:
+            event["description"] = args.description
+        if args.attendees:
+            event["attendees"] = [{"email": e.strip()} for e in args.attendees.split(",")]
 
     result = service.events().insert(calendarId=args.calendar, body=event).execute()
     print(json.dumps({
@@ -450,13 +463,14 @@ def main():
     p.set_defaults(func=calendar_list)
 
     p = cal_sub.add_parser("create")
-    p.add_argument("--summary", required=True)
-    p.add_argument("--start", required=True, help="Start (ISO 8601 with timezone)")
-    p.add_argument("--end", required=True, help="End (ISO 8601 with timezone)")
+    p.add_argument("--summary", default="")
+    p.add_argument("--start", default="", help="ISO 8601 with timezone")
+    p.add_argument("--end", default="", help="ISO 8601 with timezone")
     p.add_argument("--location", default="")
     p.add_argument("--description", default="")
-    p.add_argument("--attendees", default="", help="Comma-separated email addresses")
+    p.add_argument("--attendees", default="", help="Comma-separated emails")
     p.add_argument("--calendar", default="primary")
+    p.add_argument("--json", default="", help="Raw Google Calendar event JSON body (overrides individual args)")
     p.set_defaults(func=calendar_create)
 
     p = cal_sub.add_parser("delete")
